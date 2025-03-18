@@ -24,8 +24,8 @@ if st.button("Ajouter l'élève"):
         st.success(f"Élève ajouté avec un score de {result[0]['ScoreTotal']}")
 
 # 📜 Affichage des élèves triés
-st.header("Liste des élèves triés")
-if st.button("Afficher la liste des élèves"):
+st.header("📋 Liste des élèves triés")
+if st.button("📌 Afficher la liste des élèves"):
     query = "liste_eleves(L)"
     result = list(prolog.query(query))
 
@@ -35,20 +35,18 @@ if st.button("Afficher la liste des élèves"):
         # Vérification et nettoyage des données
         cleaned_eleves = []
         for elem in eleves:
-            # Supprimer les caractères parasites (",(" et ")") si nécessaire
-            elem = elem.strip(",()")
+            elem = elem.strip(",()")  # Nettoyage des caractères parasites
             parts = elem.split(", ")
-            
+
             if len(parts) == 2:
-                nom = parts[0].strip("'")  # S'assurer que le nom est une chaîne
+                nom = parts[0].strip("'")  # Assurer que le nom est une chaîne
                 score = float(parts[1])  # Convertir le score en nombre
-                cleaned_eleves.append((nom, score))
+                cleaned_eleves.append({"Nom": nom, "Score": score})
 
         # Trier par score décroissant
-        cleaned_eleves.sort(key=lambda x: x[1], reverse=True)
+        cleaned_eleves.sort(key=lambda x: x["Score"], reverse=True)
 
-        for nom, score in cleaned_eleves:
-            st.write(f"📌 {nom} - Score: {score}")
-    else:
-        st.warning("Aucun élève enregistré.")
-
+        if cleaned_eleves:
+            st.dataframe(cleaned_eleves, hide_index=True, use_container_width=True)  # Affichage dynamique
+        else:
+            st.warning("Aucun élève enregistré.")
